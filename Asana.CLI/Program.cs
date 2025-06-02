@@ -121,6 +121,22 @@ namespace Asana
                                 project.Remove(deleteReference);
                             }
                             break;
+                        case 10:
+                            project.ForEach(Console.WriteLine);
+                            Console.Write("Project to Update: ");
+                            var projectUpdateChoice = int.Parse(Console.ReadLine() ?? "0");
+                            var updateProjectReference = project.FirstOrDefault(p => p.Id == projectUpdateChoice);
+                            if (updateProjectReference != null)
+                            {
+                                Console.Write("Name:");
+                                updateProjectReference.Name = Console.ReadLine();
+                                Console.Write("Description:");
+                                updateProjectReference.Description = Console.ReadLine();
+                                //// Assuming you might want to update the CompletePercent as well
+                                //Console.Write("Complete Percent:");
+                                //updateProjectReference.CompletePercent = int.Parse(Console.ReadLine() ?? "0");
+                            }
+                            break;
                         case 11:
                             break;
                         default:
