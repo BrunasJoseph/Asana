@@ -98,6 +98,29 @@ namespace Asana
                         case 7:
                             project.ForEach(Console.WriteLine);
                             break;
+                        case 8:
+                            project.ForEach(Console.WriteLine);
+                            Console.Write("Project to List ToDos for: ");
+                            var projectChoice = int.Parse(Console.ReadLine() ?? "0");
+                            var projectReference = project.FirstOrDefault(p => p.Id == projectChoice);
+                            if (projectReference != null && projectReference.ToDos != null)
+                            {
+                                projectReference.ToDos.ForEach(Console.WriteLine);
+                            } else
+                            {
+                                Console.WriteLine("No ToDos found for this Project.");
+                            }
+                            break;
+                        case 9:
+                            project.ForEach(Console.WriteLine);
+                            Console.Write("Project to Delete: ");
+                            var projectDeleteChoice = int.Parse(Console.ReadLine() ?? "0");
+                            var deleteReference = project.FirstOrDefault(p => p.Id == projectDeleteChoice);
+                            if (deleteReference != null)
+                            {
+                                project.Remove(deleteReference);
+                            }
+                            break;
                         case 11:
                             break;
                         default:
