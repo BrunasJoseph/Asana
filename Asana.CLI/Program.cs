@@ -1,4 +1,5 @@
 ﻿using Asana.Library.Models;
+using Asana.Library.Services;
 using System;
 
 namespace Asana
@@ -7,25 +8,21 @@ namespace Asana
     {
         public static void Main(string[] args)
         {
-            var toDos = new List<ToDo>();
-            var project = new List<Project>();
+            var toDoSvc = ToDoServiceProxy.Current;
             int choiceInt;
-            var itemCount = 0;
-            var projectCount = 0;
-            var toDoChoice = 0;
             do
             {
                 Console.WriteLine("Choose a menu option:");
-                Console.WriteLine("1. Create a ToDo");
-                Console.WriteLine("2. List all ToDos");
-                Console.WriteLine("3. List all outstanding ToDos");
-                Console.WriteLine("4. Delete a ToDo");
-                Console.WriteLine("5. Update a ToDo");
-                Console.WriteLine("6. Create a Project");
-                Console.WriteLine("7. List all Projects");
-                Console.WriteLine("8. List all ToDos in a Project");
-                Console.WriteLine("9. Delete a Project");
-                Console.WriteLine("10. Update a Project");
+                Console.WriteLine("1. Create a Project");
+                Console.WriteLine("2. List all Projects");
+                Console.WriteLine("3. Delete a Project");
+                Console.WriteLine("4. Update a Project");
+                Console.WriteLine("5. Create a ToDo");
+                Console.WriteLine("6. List all ToDos");
+                Console.WriteLine("7. List all outstanding ToDos");
+                Console.WriteLine("8. Delete a ToDo");
+                Console.WriteLine("9. Update a ToDo");
+                Console.WriteLine("10. List all ToDos in a Project");
                 Console.WriteLine("11. Exit");
 
                 var choice = Console.ReadLine() ?? "7";
@@ -34,110 +31,125 @@ namespace Asana
                 {
                     switch (choiceInt)
                     {
-                        case 1:
-                            Console.Write("Name:");
+                        case 1: // Create a Project
+                            Console.Write("Project Name: ");
+                            var pname = Console.ReadLine();
+                            Console.Write("Project Description: ");
+                            var pdesc = Console.ReadLine();
+                            toDoSvc.AddProject(pname, pdesc);
+                            break;
+
+                        case 2: // List all Projects
+                            foreach (var p in toDoSvc.GetAllProjects())
+                            {
+                                Console.WriteLine($"{p.Id}: {p.Name} - {p.CompletePercent}% complete");
+                            }
+                            break;
+
+                        case 3: // Delete a Project
+                            Console.Write("Project ID to delete: ");
+                            int delId = int.Parse(Console.ReadLine());
+                            toDoSvc.DeleteProject(delId);
+                            break;
+
+                        case 4: // Update a Project
+                            Console.Write("Project ID to update: ");
+                            int updId = int.Parse(Console.ReadLine());
+                            Console.Write("New Name: ");
+                            var newName = Console.ReadLine();
+                            Console.Write("New Description: ");
+                            var newDesc = Console.ReadLine();
+                            toDoSvc.UpdateProject(new Project { Id = updId, Name = newName, Description = newDesc });
+                            break;
+
+                        case 5: // Create a ToDo
+                            Console.Write("Name: ");
                             var name = Console.ReadLine();
-                            Console.Write("Description:");
+                            Console.Write("Description: ");
                             var description = Console.ReadLine();
+                            Console.Write("Priority: ");
+                            var priority = Console.ReadLine();
+                            Console.Write("Project ID: ");
+                            int pid = int.Parse(Console.ReadLine());
 
-                            toDos.Add(new ToDo { Name = name,
+                            toDoSvc.AddOrUpdate(new ToDo
+                            {
+                                Id = 0,
+                                Name = name,
                                 Description = description,
+                                Priority = 0,
                                 IsCompleted = false,
-                                Id = ++itemCount});
+                                ProjectId = pid
+                            });
+
+                            var proj = toDoSvc.GetAllProjects().Find(p => p.Id == pid);
+                            if (proj != null)
+                            {
+                                proj.ToDos.Add(todo.Id);
+                                toDoSvc.UpdateProjectCompletion(proj);
+                            }
                             break;
-                        case 2:
-                            toDos.ForEach(Console.WriteLine);
+
+                        case 6: // List all ToDos 
+                            toDoSvc.DisplayToDos(true);
                             break;
-                        case 3:
-                            toDos.Where(t => (t != null) && !(t?.IsCompleted ?? false))
-                                .ToList()
-                                .ForEach(Console.WriteLine);
+
+                        case 7: // List all outstanding ToDos
+                            toDoSvc.DisplayToDos();
                             break;
-                        case 4:
-                            
-                            toDos.ForEach(Console.WriteLine);
+                        case 8: // Delete a ToDo
+                            toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Delete: ");
-                            toDoChoice = int.Parse(Console.ReadLine() ?? "0");
+                            var toDoChoice4 = int.Parse(Console.ReadLine() ?? "0");
 
-                            var reference = toDos.FirstOrDefault(t => t.Id == toDoChoice);
-                            if (reference != null)
-                            {
-                                toDos.Remove(reference);
-                            }
-                            
+                            var reference = toDoSvc.GetById(toDoChoice4);
+                            toDoSvc.DeleteToDo(reference);
                             break;
-                        case 5:
-                            
-                            toDos.ForEach(Console.WriteLine);
+                        case 9: // Update a ToDo
+                            toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Update: ");
-                            toDoChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var updateReference = toDos.FirstOrDefault(t => t.Id == toDoChoice);
+                            var toDoChoice5 = int.Parse(Console.ReadLine() ?? "0");
+                            var updateReference = toDoSvc.GetById(toDoChoice5);
 
-                            if(updateReference != null)
+                            if (updateReference != null)
                             {
-                                Console.Write("Name:");
+                                Console.Write("Name: ");
                                 updateReference.Name = Console.ReadLine();
-                                Console.Write("Description:");
+
+                                Console.Write("Description: ");
                                 updateReference.Description = Console.ReadLine();
+
+                                Console.Write("Priority (1=Low, 2=Medium, 3=High): ");
+                                var priorityInput = Console.ReadLine();
+                                if (int.TryParse(priorityInput, out int parsedPriority))
+                                {
+                                    updateReference.Priority = parsedPriority;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid input. Priority not updated.");
+                                }
+
+                                Console.Write("Is Completed (true/false): ");
+                                var completedInput = Console.ReadLine();
+                                updateReference.IsCompleted = bool.TryParse(completedInput, out bool completed)
+                                    ? completed
+                                    : false;
                             }
 
+                            toDoSvc.AddOrUpdate(updateReference);
                             break;
-                        case 6:
-                            Console.Write("Name:");
-                            var prjName = Console.ReadLine();
-                            Console.Write("Description:");
-                            var prjDescription = Console.ReadLine();
 
-                            project.Add(new Project
+                        case 10: // List all ToDos in a Project
+                            Console.Write("Enter Project ID: ");
+                            int pidView = int.Parse(Console.ReadLine());
+                            var todos = toDoSvc.GetToDosByProject(pidView);
+                            foreach (var t in todos)
                             {
-                                Name = prjName,
-                                Description = prjDescription,
-                                CompletePercent = 2,
-                                Id = ++projectCount});
-                            break;
-                        case 7:
-                            project.ForEach(Console.WriteLine);
-                            break;
-                        case 8:
-                            project.ForEach(Console.WriteLine);
-                            Console.Write("Project to List ToDos for: ");
-                            var projectChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var projectReference = project.FirstOrDefault(p => p.Id == projectChoice);
-                            if (projectReference != null && projectReference.ToDos != null)
-                            {
-                                projectReference.ToDos.ForEach(Console.WriteLine);
-                            } else
-                            {
-                                Console.WriteLine("No ToDos found for this Project.");
+                                Console.WriteLine($"{t.Id}: {t.Name} | Done: {t.IsCompleted}");
                             }
                             break;
-                        case 9:
-                            project.ForEach(Console.WriteLine);
-                            Console.Write("Project to Delete: ");
-                            var projectDeleteChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var deleteReference = project.FirstOrDefault(p => p.Id == projectDeleteChoice);
-                            if (deleteReference != null)
-                            {
-                                project.Remove(deleteReference);
-                            }
-                            break;
-                        case 10:
-                            project.ForEach(Console.WriteLine);
-                            Console.Write("Project to Update: ");
-                            var projectUpdateChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var updateProjectReference = project.FirstOrDefault(p => p.Id == projectUpdateChoice);
-                            if (updateProjectReference != null)
-                            {
-                                Console.Write("Name:");
-                                updateProjectReference.Name = Console.ReadLine();
-                                Console.Write("Description:");
-                                updateProjectReference.Description = Console.ReadLine();
-                                //// Assuming you might want to update the CompletePercent as well
-                                //Console.Write("Complete Percent:");
-                                //updateProjectReference.CompletePercent = int.Parse(Console.ReadLine() ?? "0");
-                            }
-                            break;
-                        case 11:
+                        case 11: // Exit
                             break;
                         default:
                             Console.WriteLine("ERROR: Unknown menu selection");
