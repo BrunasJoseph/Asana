@@ -9,6 +9,7 @@ namespace Asana
         public static void Main(string[] args)
         {
             var toDoSvc = ToDoServiceProxy.Current;
+            var projectSvc = ProjectServiceProxy.Current;
             int choiceInt;
             do
             {
@@ -36,11 +37,11 @@ namespace Asana
                             var pname = Console.ReadLine();
                             Console.Write("Project Description: ");
                             var pdesc = Console.ReadLine();
-                            toDoSvc.AddProject(pname, pdesc);
+                            projectSvc.AddProject(pname, pdesc);
                             break;
 
                         case 2: // List all Projects
-                            foreach (var p in toDoSvc.GetAllProjects())
+                            foreach (var p in projectSvc.GetAllProjects())
                             {
                                 Console.WriteLine($"{p.Id}: {p.Name} - {p.CompletePercent}% complete");
                             }
@@ -49,7 +50,7 @@ namespace Asana
                         case 3: // Delete a Project
                             Console.Write("Project ID to delete: ");
                             int delId = int.Parse(Console.ReadLine());
-                            toDoSvc.DeleteProject(delId);
+                            projectSvc.DeleteProject(delId);
                             break;
 
                         case 4: // Update a Project
@@ -59,7 +60,7 @@ namespace Asana
                             var newName = Console.ReadLine();
                             Console.Write("New Description: ");
                             var newDesc = Console.ReadLine();
-                            toDoSvc.UpdateProject(new Project { Id = updId, Name = newName, Description = newDesc });
+                            projectSvc.UpdateProject(new Project { Id = updId, Name = newName, Description = newDesc });
                             break;
 
                         case 5: // Create a ToDo
@@ -67,12 +68,12 @@ namespace Asana
                             var name = Console.ReadLine();
                             Console.Write("Description: ");
                             var description = Console.ReadLine();
-                            Console.Write("Priority: ");
+                            Console.Write("Priority (1=Low, 2=Medium, 3=High): ");
                             var priority = Console.ReadLine();
                             Console.Write("Project ID: ");
                             int pid = int.Parse(Console.ReadLine());
 
-                            toDoSvc.AddOrUpdate(new ToDo
+                            var todo = new ToDo
                             {
                                 Id = 0,
                                 Name = name,
@@ -80,13 +81,15 @@ namespace Asana
                                 Priority = 0,
                                 IsCompleted = false,
                                 ProjectId = pid
-                            });
+                            };
 
-                            var proj = toDoSvc.GetAllProjects().Find(p => p.Id == pid);
+                            toDoSvc.AddOrUpdate(todo);
+                            var proj = projectSvc.GetAllProjects().Find(p => p.Id == pid);
                             if (proj != null)
                             {
-                                proj.ToDos.Add(todo.Id);
-                                toDoSvc.UpdateProjectCompletion(proj);
+                                proj.ToDos ??= new List<ToDo>();
+                                proj.ToDos.Add(todo);
+                                projectSvc.UpdateProjectCompletion(proj);
                             }
                             break;
 
@@ -143,7 +146,7 @@ namespace Asana
                         case 10: // List all ToDos in a Project
                             Console.Write("Enter Project ID: ");
                             int pidView = int.Parse(Console.ReadLine());
-                            var todos = toDoSvc.GetToDosByProject(pidView);
+                            var todos = projectSvc.GetToDosByProject(pidView);
                             foreach (var t in todos)
                             {
                                 Console.WriteLine($"{t.Id}: {t.Name} | Done: {t.IsCompleted}");
