@@ -80,7 +80,7 @@ namespace Asana.Library.Services
             }
             else
             {
-                ToDos.Where(t => (t != null) && !(t.IsCompleted))
+                ToDos.Where(t => (t != null) && !(t.IsCompleted == true))
                      .ToList()
                      .ForEach(Console.WriteLine);
             }
@@ -106,9 +106,9 @@ namespace Asana.Library.Services
             if (todo != null)
             {
                 _toDoList.Remove(todo);
-                var project = _projects.FirstOrDefault(p => p.Id == todo.ProjectId);
-                project?.ToDoIds.Remove(id);
-                UpdateProjectCompletion(project);
+                var project = ProjectServiceProxy.Current.GetAllProjects().FirstOrDefault(p => p.Id == todo.ProjectId);
+                project?.ToDos?.RemoveAll(t => t.Id == id);
+                ProjectServiceProxy.Current.UpdateProjectCompletion(project);
                 return true;
             }
             return false;
