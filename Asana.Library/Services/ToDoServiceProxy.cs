@@ -30,7 +30,7 @@ namespace Asana.Library.Services
         {
             ToDos = new List<ToDo>
             {
-                new ToDo{Id = 1, Name = "Task 1", Description = "My Task 1", IsCompleted=true}
+                new ToDo{Id = 1, Name = "Task 1", Description = "My Task 1", IsCompleted=true, DueDate= DateTime.Today}
             };
         }
 

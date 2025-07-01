@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asana.CLI", "Asana.CLI\Asan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asana.Library", "Asana.Library\Asana.Library.csproj", "{51EFED9B-A826-47ED-B975-FB3F99DB366D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asana.Maui", "Asana.Maui\Asana.Maui.csproj", "{D38CFB2E-FEE3-41D1-A01F-301310408A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{51EFED9B-A826-47ED-B975-FB3F99DB366D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51EFED9B-A826-47ED-B975-FB3F99DB366D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51EFED9B-A826-47ED-B975-FB3F99DB366D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D38CFB2E-FEE3-41D1-A01F-301310408A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D38CFB2E-FEE3-41D1-A01F-301310408A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D38CFB2E-FEE3-41D1-A01F-301310408A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D38CFB2E-FEE3-41D1-A01F-301310408A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
