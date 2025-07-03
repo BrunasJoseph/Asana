@@ -46,8 +46,8 @@ namespace Asana.Library.Services
         {
             Projects = new List<Project>
             {
-                new Project { Id = 1, Name = "Sample Project", Description = "This is a sample project." },
-                new Project { Id = 2, Name = "Another Project", Description = "This is another sample project." }
+                new Project { Id = 1, Name = "Project 1", Description = "This is a sample project." },
+                new Project { Id = 2, Name = "Project 2", Description = "This is another sample project." }
             };
         }
 
