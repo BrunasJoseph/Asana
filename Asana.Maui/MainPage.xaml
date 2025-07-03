@@ -14,9 +14,10 @@
                     <RowDefinition/>
                     <RowDefinition Height="10*"/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <!-- Tool Bar-->
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="5*"/>
@@ -24,9 +25,34 @@
                     <Label Grid.Column="0" Text="Show Completed Tasks:"/>
                     <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
                 </Grid>
+                <!-- Projects List-->
+                <ListView
+                Grid.Row="0"
+                ItemsSource="{Binding Projects}"
+                SelectedItem="{Binding SelectedProject}"
+                >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label TextColor="Green" Grid.Row="0" Grid.Column="0" Text="{Binding Model.Name}"/>
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Model.Description}"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <!-- ToDo List-->
                 <ListView
-                Grid.Row="1"
+                Grid.Row="2"
                 ItemsSource="{Binding ToDos}"
                 SelectedItem="{Binding SelectedToDo}"
                 >
@@ -62,7 +88,10 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <!-- Button Bar -->
-                <VerticalStackLayout Grid.Row="2">
+                <VerticalStackLayout Grid.Row="3">
+                    <Button Text="Add New Project" Clicked="AddNewProjClicked"/>
+                    <Button Text="Edit Selected Project" Clicked="EditProjClicked"/>
+                    <Button Text="Delete Selected Project" Clicked="DeleteProjClicked"/>
                     <Button Text="Add New ToDo" Clicked="AddNewClicked"/>
                     <Button Text="Edit Selected ToDo" Clicked="EditClicked"/>
                     <Button Text="Delete Selected ToDo" Clicked="DeleteClicked"/>

@@ -9,12 +9,47 @@ namespace Asana.Library.Services
 {
     public class ProjectServiceProxy
     {
-        private List<Project> _projects = new();
+        private List<Project> _projects;
+
+        public List<Project> Projects
+        {
+            get
+            {
+                return _projects.Take(100).ToList();
+            }
+            private set
+            {
+                if (value != _projects)
+                {
+                    _projects = value;
+                }
+            }
+        }
         private List<ToDo> _toDoList => ToDoServiceProxy.Current.ToDos;
 
         private static ProjectServiceProxy? instance;
 
-        private int nextProjectKey => _projects.Any() ? _projects.Max(p => p.Id) + 1 : 1;
+
+        private int nextProjectKey
+        {
+            get
+            {
+                if (_projects.Any())
+                {
+                    return _projects.Select(p => p.Id).Max() + 1;
+                }
+                return 1;
+            }
+        }
+
+        private ProjectServiceProxy()
+        {
+            Projects = new List<Project>
+            {
+                new Project { Id = 1, Name = "Sample Project", Description = "This is a sample project." },
+                new Project { Id = 2, Name = "Another Project", Description = "This is another sample project." }
+            };
+        }
 
 
         public static ProjectServiceProxy Current
@@ -29,6 +64,16 @@ namespace Asana.Library.Services
             }
         }
 
+        public Project? AddOrUpdate(Project? proj)
+        {
+            if (proj != null && proj.Id == 0)
+            {
+                proj.Id = nextProjectKey;
+                _projects.Add(proj);
+            }
+
+            return proj;
+        }
 
         public Project AddProject(string name, string description)
         {
@@ -52,6 +97,20 @@ namespace Asana.Library.Services
                 return true;
             }
             return false;
+        }
+
+        public void DeleteProject(Project? project)
+        {
+            if (project == null)
+            {
+                return;
+            }
+            _projects.Remove(project);
+        }
+
+        public Project? GetProjectById(int id)
+        {
+            return _projects.FirstOrDefault(p => p.Id == id);
         }
 
         public List<Project> GetAllProjects() => _projects;

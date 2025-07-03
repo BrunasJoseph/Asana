@@ -37,7 +37,15 @@ namespace Asana
                             var pname = Console.ReadLine();
                             Console.Write("Project Description: ");
                             var pdesc = Console.ReadLine();
-                            projectSvc.AddProject(pname, pdesc);
+
+                            var project = new Project
+                            {
+                                Id = 0,
+                                Name = pname,
+                                Description = pdesc,
+                                CompletePercent = 0
+                            };
+                            projectSvc.AddOrUpdate(project);
                             break;
 
                         case 2: // List all Projects
