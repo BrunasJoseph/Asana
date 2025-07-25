@@ -50,6 +50,10 @@ namespace Asana.Maui.ViewModels
                 {
                     toDos = toDos.Where(t => !t?.Model?.IsCompleted ?? false);
                 }
+                if (IsSortedByName)
+                {
+                    toDos = toDos.OrderBy(t => t?.Model?.Name ?? string.Empty);
+                }
                 return new ObservableCollection<ToDoDetailViewModel>(toDos);
             }
         }
@@ -58,9 +62,13 @@ namespace Asana.Maui.ViewModels
         {
             get
             {
-                return new ObservableCollection<ProjectDetailViewModel>(
-                    _projectSvc.Projects.Where(p => (p?.Name?.Contains(Query) ?? false) || (p?.Description?.Contains(Query) ?? false))
-                    .Select(p => new ProjectDetailViewModel(p)));
+                var projects = _projectSvc.Projects.Where(p => (p?.Name?.Contains(Query) ?? false) || (p?.Description?.Contains(Query) ?? false))
+                    .Select(p => new ProjectDetailViewModel(p));
+                if (IsSortedByName)
+                {
+                    projects = projects.OrderBy(p => p?.Model?.Name ?? string.Empty);
+                }
+                return new ObservableCollection<ProjectDetailViewModel>(projects);
             }
         }
 
@@ -80,6 +88,24 @@ namespace Asana.Maui.ViewModels
                 {
                     isShowCompleted = value;
                     NotifyPropertyChanged(nameof(ToDos));
+                }
+            }
+        }
+
+        private bool isSortedByName;
+        public bool IsSortedByName
+        {
+            get
+            {
+                return isSortedByName;
+            }
+            set
+            {
+                if (isSortedByName != value)
+                {
+                    isSortedByName = value;
+                    NotifyPropertyChanged(nameof(ToDos));
+                    NotifyPropertyChanged(nameof(Projects));
                 }
             }
         }

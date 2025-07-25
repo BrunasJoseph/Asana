@@ -19,19 +19,30 @@
                 <!-- Tool Bar-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Show Completed Tasks:"/>
-                    <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
-                     <Grid Grid.Column="2">
+
+                    <!-- Show Completed Tasks -->
+                    <Label Grid.Column="0" Text="Show Completed Tasks:" VerticalOptions="Center" />
+                    <CheckBox Grid.Column="1" IsChecked="{Binding IsShowCompleted}" VerticalOptions="Center" />
+
+                    <!-- Sort Alphabetically -->
+                    <Label Grid.Column="2" Text="Sort Alphabetically:" VerticalOptions="Center" />
+                    <CheckBox Grid.Column="3" IsChecked="{Binding IsSortedByName}" VerticalOptions="Center" />
+
+                    <!-- Search -->
+                    <Grid Grid.Column="4" ColumnSpacing="5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Entry Grid.Column="0" Text="{Binding Query}"/>
-                        <Button Grid.Column="1" Text="Search" Clicked="SearchClicked"/>
+
+                        <Entry Grid.Column="0" Text="{Binding Query}" Placeholder="Search..." />
+                        <Button Grid.Column="1" Text="Search" Clicked="SearchClicked" />
                     </Grid>
                 </Grid>
                 <!-- Projects List-->
