@@ -17,17 +17,26 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <!-- Tool Bar-->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="5*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Text="Show Completed Tasks:"/>
                     <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
+                     <Grid Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Entry Grid.Column="0" Text="{Binding Query}"/>
+                        <Button Grid.Column="1" Text="Search" Clicked="SearchClicked"/>
+                    </Grid>
                 </Grid>
                 <!-- Projects List-->
                 <ListView
-                Grid.Row="0"
+                Grid.Row="1"
                 ItemsSource="{Binding Projects}"
                 SelectedItem="{Binding SelectedProject}"
                 >
